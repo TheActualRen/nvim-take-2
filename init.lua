@@ -12,7 +12,7 @@ vim.o.undofile = true
 vim.o.wrap = true
 vim.o.swapfile = false
 vim.o.signcolumn = "yes"
--- vim.o.winborder = "rounded"
+vim.o.winborder = "rounded"
 
 vim.g.mapleader = " "
 
