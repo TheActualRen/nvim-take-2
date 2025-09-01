@@ -1,44 +1,50 @@
 return {
-    "mason-org/mason-lspconfig.nvim",
-
-    dependencies = {
-        { "mason-org/mason.nvim", opts = {} },
+    {
+        "williamboman/mason.nvim",
+        config = function()
+            require("mason").setup()
+        end,
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        config = function()
+            require("mason-lspconfig").setup({
+                ensure_installed = {
+                    "lua_ls",
+                    "clangd",
+                    "pyright",
+                    "html",
+                    "cssls",
+                    "ts_ls",
+                },
+            })
+        end,
+    },
+    {
         "neovim/nvim-lspconfig",
-        { "saghen/blink.cmp" },
+        config = function()
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+            local lspconfig = require("lspconfig")
+            local servers = {
+                "lua_ls",
+                "clangd",
+                "pyright",
+                "html",
+                "cssls",
+                "ts_ls",
+            }
+
+            for _, server in ipairs(servers) do
+                lspconfig[server].setup({
+                    capabilities = capabilities,
+                })
+            end
+
+            -- Keymaps
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+            vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
+            vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
+        end,
     },
-
-    opts = {
-        ensure_installed = {
-            "clangd",
-            "basedpyright",
-        },
-
-        automatic_installation = true,
-
-        servers = {
-            clangd = {},
-            basedpyright = {},
-        },
-    },
-
-    setup_servers = function(opts)
-        local lspconfig = require("lspconfig")
-        local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-        for server, server_opts in pairs(opts.servers) do
-            server_opts.capabilities = capabilities
-            lspconfig[server].setup(server_opts)
-        end
-    end,
-
-    config = function(_, opts)
-        require("mason").setup()
-        require("mason-lspconfig").setup({
-            ensure_installed = opts.ensure_installed,
-            automatic_installation = opts.automatic_installation,
-        })
-
-        require("config.plugins.mason-lsp").setup_servers(opts)
-    end,
 }
-
