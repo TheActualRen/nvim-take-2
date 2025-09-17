@@ -14,6 +14,7 @@ return {
                     "ts_ls",
                 },
 
+				-- MUST BE FALSE / NIL TO AVOID DUP ISSUE
                 automatic_installation = false,
                 automatic_setup = false,
                 automatic_enable = false,
