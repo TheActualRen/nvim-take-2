@@ -41,12 +41,11 @@ return {
                 "n", "<leader>fe",
                 builtin.diagnostics,
                 { desc = "Telescope find LSP errors" })
-
         end
     },
 
     {
-		'nvim-telescope/telescope-ui-select.nvim',
+        'nvim-telescope/telescope-ui-select.nvim',
 
         config = function()
             require("telescope").setup({
