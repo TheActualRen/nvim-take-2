@@ -2,6 +2,7 @@ return {
     "nvimtools/none-ls.nvim",
     config = function()
         local null_ls = require("null-ls")
+        local fs = vim.loop.fs_stat -- check if a file exists
 
         null_ls.setup({
             sources = {
@@ -9,21 +10,21 @@ return {
                 null_ls.builtins.formatting.prettier,
                 null_ls.builtins.formatting.black,
                 null_ls.builtins.formatting.isort,
+
                 null_ls.builtins.formatting.clang_format.with({
-                    extra_args = function(params)
-                        -- Prefer project `.clang-format` if it exists
-                        local config_file = vim.fn.findfile(".clang-format", params.root .. ";")
-                        if config_file ~= "" then
-                            return { "--style=file" }
-                        end
-                        return {
-                            "--style={BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 100, BreakBeforeBraces: Allman, PointerAlignment: Right}"
-                        }
+                    extra_args = {
+                        "-style={BasedOnStyle: LLVM, IndentWidth: 4, BreakBeforeBraces: Allman, PointerAlignment: Right}"
+                    },
+                    condition = function()
+                        return not fs(".clang-format") -- only apply if no file exists
                     end,
                 }),
-            },
+            }
         })
 
-        vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format, { desc = "Format File" })
+        vim.keymap.set(
+            "n", "<leader>gf", vim.lsp.buf.format,
+            { desc = "Format File" }
+        )
     end,
 }
